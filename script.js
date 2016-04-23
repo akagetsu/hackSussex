@@ -12,6 +12,9 @@ function preload() {
 	game.load.image('extra', 'assets/extra.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/file-code.svg
 	game.load.image('watchers', 'assets/watchers.png'); // sprites taken from https://github.com/github/octicons/blob/master/svg/eye.svg
 	game.load.image('release', 'assets/release.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/tag.svg
+	game.load.image('gamepad', 'assets/gamepad.png'); // font used http://www.dafont.com/8bit-wonder.font
+	game.load.image('keyboard', 'assets/keyboard.png'); // font used http://www.dafont.com/8bit-wonder.font
+	game.load.image('start', 'assets/start.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
 }
@@ -22,6 +25,23 @@ var ground;
 var enemies;
 var score;
 var pad;
+var cursors;
+var attKey;
+var jmpKey;
+var pauseKey;
+var keyImg;
+var padImg;
+var startImg;
+
+var options = {
+	sounds: true,
+	gamepad: false
+};
+var gameState = {
+	menu: true,
+	game: false,
+	pause: false
+};
 
 function create() {
 	// game setup
@@ -47,52 +67,115 @@ function create() {
 	wall.body.immovable = true;
 
 	pad = new Gamepad(game).init();
+	cursors = game.input.keyboard.createCursorKeys();
+	attKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
+	jmpKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+	pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 
 	player = new Player(game);
 	player.initialize();
 
-	// enemy setup
-	enemies = new Enemy(game);
-	enemies.init();
-
-	releases = new Release(game);
-	releases.init();
-
-
-	score = new Score(game);
-	score.setScoreElem();
+	menus();
 }
 
 function update() {
 	physicsHandler();
-
+	if (gameState.menu || gameState.pause) {
+		return;
+	}
 	player.update();
 	controlHandler();
 }
 
 function physicsHandler() {
 	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
-	game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
-	game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
-	game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
-	game.physics.arcade.overlap(player.getSprite(), releases.getReleases(), goodRelease, null, this);
-	game.physics.arcade.overlap(ground, releases.getReleases(), failRelease, null, this);
+	if (gameState.game) {
+
+		game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
+		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
+		game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
+		game.physics.arcade.overlap(player.getSprite(), releases.getReleases(), goodRelease, null, this);
+		game.physics.arcade.overlap(ground, releases.getReleases(), failRelease, null, this);
+	}
+}
+
+function menus() {
+	keyImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 70, 'keyboard');
+	keyImg.inputEnabled = true;
+	keyImg.tint = 0x0000A0;
+	keyImg.events.onInputDown.add(function() {
+		options.gamepad = false;
+		keyImg.tint = 0x0000A0;
+		padImg.tint = 0x8B0000;
+	}, this);
+
+	padImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2, 'gamepad');
+	padImg.inputEnabled = true;
+	padImg.tint = 0x8B0000;
+	padImg.events.onInputDown.add(function() {
+		options.gamepad = true;
+		keyImg.tint = 0x8B0000;
+		padImg.tint = 0x0000A0;
+	}, this);
+
+	startImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 + 70, 'start');
+	startImg.inputEnabled = true;
+	startImg.tint = 0x008000;
+	startImg.events.onInputDown.add(function() {
+		init();
+	}, this);
+}
+
+function init() {
+	keyImg.destroy();
+	startImg.destroy();
+	padImg.destroy();
+
+	gameState.menu = false;
+	gameState.game = true;
+
+	enemies = new Enemy(game);
+	enemies.init();
+
+	releases = new Release(game);
+	releases.init();
+
+	score = new Score(game);
+	score.setScoreElem();
 }
 
 // Controls
 function controlHandler() {
-	if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
-		player.move(-350);
-	} else if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
-		player.move(350);
-	}
+	if (gameState.game) {
+		if (options.gamepad) {
+			if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
+				player.move(-350);
+			} else if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
+				player.move(350);
+			}
 
-	if (pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
-		player.jump();
-	}
+			if (pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
+				player.jump();
+			}
 
-	if (pad.justPressed(Phaser.Gamepad.XBOX360_X, 100)) {
-		player.fire();
+			if (pad.justPressed(Phaser.Gamepad.XBOX360_X, 100)) {
+				player.fire();
+			}
+		} else {
+			if (cursors.left.isDown) {
+				player.move(-350);
+			} else if (cursors.right.isDown) {
+				player.move(350);
+			}
+
+			if (jmpKey.isDown && player.getSprite().body.touching.down) {
+				player.jump();
+			}
+
+			if (attKey.isDown) {
+				player.fire();
+			}
+		}
 	}
 }
 
