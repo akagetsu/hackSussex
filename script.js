@@ -9,16 +9,15 @@ function preload() {
 	game.load.image('wall', 'assets/wall.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('ground', 'assets/ground.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('star', 'assets/star.png');
+	game.load.spritesheet('bullet', 'assets/bullet.png', 19, 17); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
 
 var player;
 var walls;
-var cursors;
 var enemies;
 var score = 0;
 var scoreText;
-var pad1;
 
 function create() {
 	// game setup
@@ -43,11 +42,7 @@ function create() {
 
 	wall.body.immovable = true;
 
-	game.input.onDown.add(dump, this);
-
-	pad1 = new Gamepad(game).init();
-
-	player = new Player(game, pad1);
+	player = new Player(game);
 	player.initialize();
 
 	// enemy setup
@@ -67,12 +62,6 @@ function create() {
 	});
 }
 
-function dump() {
-
-    game.debug.text(pad1);
-
-}
-
 function update() {
 	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
 
@@ -81,9 +70,6 @@ function update() {
 	game.physics.arcade.overlap(player.getSprite(), enemies, collectStar, null, this);
 
 	player.update();
-
-    game.debug.text(pad1);
-
 }
 
 function collectStar(player, star) {

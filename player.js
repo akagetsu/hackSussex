@@ -1,12 +1,19 @@
-function Player(game, pad) {
+function Player(game) {
 	this.game = game;
-	this.pad = pad;
+	this.pad = null;
 	this.sprite = null;
+	this.bullets = null;
+	this.nextFire = 0;
+	this.fireFate = 100;
 }
 
 Player.prototype.initialize = function initialize() {
 	this.sprite = this.game.add.sprite(game.world.width / 2, game.world.height - 150, 'dude');
 	this.game.physics.arcade.enable(this.sprite);
+
+	this.pad = new Gamepad(this.game).init();
+	this.bullets = new Bullet(this.game).init();
+
 	this.sprite.body.bounce.y = 0.1;
 	this.sprite.body.gravity.y = 500;
 	this.sprite.body.collideWorldBounds = true;
@@ -30,16 +37,27 @@ Player.prototype.update = function update() {
 		this.sprite.frame = 4;
 	}
 
-
 	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && this.sprite.body.touching.down) {
 		this.sprite.body.velocity.y = -400;
 	}
 
-	if (this.pad.justReleased(Phaser.Gamepad.XBOX360_X)) {
-		// shoot bullets
+	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
+		this.fire();
 	}
 };
 
 Player.prototype.getSprite = function getSprite() {
 	return this.sprite;
+};
+
+
+Player.prototype.fire = function fire() {
+	if (this.game.time.now > this.nextFire && this.bullets.countDead() > 0) {
+		this.nextFire = this.game.time.now + this.fireFate;
+		var bullet = this.bullets.getFirstDead();
+
+		bullet.reset(this.sprite.x, this.sprite.y);
+
+		this.game.physics.arcade.moveToXY(bullet, this.sprite.x, 0, 300);
+	}
 };
