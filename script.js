@@ -8,9 +8,10 @@ function preload() {
 	game.load.image('bground', 'assets/background.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('wall', 'assets/wall.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('ground', 'assets/ground.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
-	game.load.image('star', 'assets/star.png');
-	game.load.spritesheet('bullet', 'assets/bullet.png', 19, 17); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
-	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://raw.githubusercontent.com/mozilla/BrowserQuest/master/client/img/3/octocat.png
+	game.load.image('issue', 'assets/issue.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/issue.svg
+	game.load.image('extra', 'assets/extra.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/file-code.svg
+	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
+	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
 }
 
 var player;
@@ -46,15 +47,10 @@ function create() {
 	player.initialize();
 
 	// enemy setup
-	enemies = game.add.group();
+	enemies = new Enemy(game);
+	enemies.init();
 
-	enemies.enableBody = true;
-
-	for (var i = 1; i < 7; i++) {
-		var enemy = enemies.create(i * 65, 0, 'star');
-
-		enemy.body.gravity.y = 300;
-	}
+	enemies.spawn();
 
 	scoreText = game.add.text(16, 16, 'Score: 0', {
 		fontSize: '32px',
@@ -65,15 +61,16 @@ function create() {
 function update() {
 	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
 
-	game.physics.arcade.collide(enemies, walls); // enemy collision with walls
+	game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
 
-	game.physics.arcade.overlap(player.getSprite(), enemies, collectStar, null, this);
+	// game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), killEnemy, null, this);
+	game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), killEnemy, null, this);
 
 	player.update();
 }
 
-function collectStar(player, star) {
-	star.kill();
+function killEnemy(player, enemy) {
+	enemy.kill();
 
 	score += 10;
 	scoreText.text = 'Score: ' + score;

@@ -26,9 +26,9 @@ Player.prototype.update = function update() {
 
 	// Controls
 	if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
-		this.sprite.body.velocity.x = -250;
+		this.sprite.body.velocity.x = -350;
 	} else if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
-		this.sprite.body.velocity.x = 250;
+		this.sprite.body.velocity.x = 350;
 	}
 
 	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && this.sprite.body.touching.down) {
@@ -44,6 +44,10 @@ Player.prototype.getSprite = function getSprite() {
 	return this.sprite;
 };
 
+Player.prototype.getBullets = function getBullets() {
+	return this.bullets;
+};
+
 
 Player.prototype.fire = function fire() {
 	if (this.game.time.now > this.nextFire && this.bullets.countDead() > 0) {
@@ -51,6 +55,7 @@ Player.prototype.fire = function fire() {
 		var bullet = this.bullets.getFirstDead();
 
 		bullet.reset(this.sprite.x + 40, this.sprite.y - 10);
+		bullet.scale.setTo(1.5);
 
 		this.game.physics.arcade.moveToXY(bullet, this.sprite.x + 40, 0, 300);
 	}
