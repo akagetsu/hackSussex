@@ -11,7 +11,7 @@ Enemy.prototype.init = function init() {
 };
 
 Enemy.prototype.spawn = function spawn() {
-	var enemy = this.enemyHolder.create(Math.floor(Math.random() * (this.game.world.width - 200)) + 100, 0, 'issue');
+	var enemy = this.enemyHolder.create(Math.floor(Math.random() * (this.game.world.width - 200)) + 100, 25, 'issue');
 
 	enemy.body.gravity.y = 300;
 	enemy.scale.setTo(1.5);

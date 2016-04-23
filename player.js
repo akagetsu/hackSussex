@@ -1,6 +1,5 @@
 function Player(game) {
 	this.game = game;
-	this.pad = null;
 	this.sprite = null;
 	this.bullets = null;
 	this.nextFire = 0;
@@ -11,7 +10,6 @@ Player.prototype.initialize = function initialize() {
 	this.sprite = this.game.add.sprite(game.world.width / 2, game.world.height - 150, 'dude');
 	this.game.physics.arcade.enable(this.sprite);
 
-	this.pad = new Gamepad(this.game).init();
 	this.bullets = new Bullet(this.game).init();
 
 	this.sprite.body.gravity.y = 1000;
@@ -21,23 +19,16 @@ Player.prototype.initialize = function initialize() {
 	this.sprite.animations.play('dude');
 };
 
+Player.prototype.move = function move(dirSpd) {
+	this.sprite.body.velocity.x = dirSpd;
+};
+
+Player.prototype.jump = function jump() {
+	this.sprite.body.velocity.y = -500;
+};
+
 Player.prototype.update = function update() {
 	this.sprite.body.velocity.x = 0;
-
-	// Controls
-	if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
-		this.sprite.body.velocity.x = -350;
-	} else if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
-		this.sprite.body.velocity.x = 350;
-	}
-
-	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && this.sprite.body.touching.down) {
-		this.sprite.body.velocity.y = -500;
-	}
-
-	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
-		this.fire();
-	}
 };
 
 Player.prototype.getSprite = function getSprite() {

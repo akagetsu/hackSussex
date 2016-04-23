@@ -10,6 +10,8 @@ function preload() {
 	game.load.image('ground', 'assets/ground.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('issue', 'assets/issue.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/issue.svg
 	game.load.image('extra', 'assets/extra.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/file-code.svg
+	game.load.image('watchers', 'assets/watchers.png'); // sprites taken from https://github.com/github/octicons/blob/master/svg/eye.svg
+	game.load.image('release', 'assets/release.png'); // sprites taken from https://github.com/github/octicons/blob/master/svg/eye.svg
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
 }
@@ -17,8 +19,8 @@ function preload() {
 var player;
 var walls;
 var enemies;
-var score = 0;
-var scoreText;
+var score;
+var pad;
 
 function create() {
 	// game setup
@@ -43,6 +45,8 @@ function create() {
 
 	wall.body.immovable = true;
 
+	pad = new Gamepad(game).init();
+
 	player = new Player(game);
 	player.initialize();
 
@@ -52,26 +56,51 @@ function create() {
 
 	enemies.spawn();
 
-	scoreText = game.add.text(16, 16, 'Score: 0', {
-		fontSize: '32px',
-		fill: '#000'
-	});
+	score = new Score(game);
+	score.setScoreElem();
 }
 
 function update() {
-	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
-
-	game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
-
-	// game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), killEnemy, null, this);
-	game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), killEnemy, null, this);
+	physicsHandler();
 
 	player.update();
+	controlHandler();
 }
 
-function killEnemy(player, enemy) {
-	enemy.kill();
+function physicsHandler() {
+	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
+	game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
+	game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
+	game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
+}
 
-	score += 10;
-	scoreText.text = 'Score: ' + score;
+// Controls
+function controlHandler() {
+	if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
+		player.move(-350);
+	} else if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
+		player.move(350);
+	}
+
+	if (pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
+		player.jump();
+	}
+
+	if (pad.justPressed(Phaser.Gamepad.XBOX360_X, 100)) {
+		player.fire();
+	}
+}
+
+function takeDamage(player, enemy) {
+	score.modScore(-2);
+}
+
+function takeLessDamage() {
+	score.modScore(-1);
+}
+
+function dealDamage(bullet, enemy) {
+	enemy.kill();
+	bullet.kill();
+	score.modScore(10);
 }
