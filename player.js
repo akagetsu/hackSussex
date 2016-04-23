@@ -17,8 +17,8 @@ Player.prototype.initialize = function initialize() {
 	this.sprite.body.gravity.y = 1000;
 	this.sprite.body.collideWorldBounds = true;
 
-	this.sprite.animations.add('left', [0, 1, 2, 3], 10, true);
-	this.sprite.animations.add('right', [5, 6, 7, 8], 10, true);
+	this.sprite.animations.add('dude', [0, 1, 2, 3], 3, true);
+	this.sprite.animations.play('dude');
 };
 
 Player.prototype.update = function update() {
@@ -27,13 +27,8 @@ Player.prototype.update = function update() {
 	// Controls
 	if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
 		this.sprite.body.velocity.x = -250;
-		this.sprite.animations.play('left');
 	} else if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
 		this.sprite.body.velocity.x = 250;
-		this.sprite.animations.play('right');
-	} else {
-		this.sprite.animations.stop();
-		this.sprite.frame = 4;
 	}
 
 	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && this.sprite.body.touching.down) {
@@ -55,8 +50,8 @@ Player.prototype.fire = function fire() {
 		this.nextFire = this.game.time.now + this.fireFate;
 		var bullet = this.bullets.getFirstDead();
 
-		bullet.reset(this.sprite.x, this.sprite.y);
+		bullet.reset(this.sprite.x + 40, this.sprite.y - 10);
 
-		this.game.physics.arcade.moveToXY(bullet, this.sprite.x, 0, 300);
+		this.game.physics.arcade.moveToXY(bullet, this.sprite.x + 40, 0, 300);
 	}
 };

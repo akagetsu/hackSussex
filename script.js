@@ -10,7 +10,7 @@ function preload() {
 	game.load.image('ground', 'assets/ground.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('star', 'assets/star.png');
 	game.load.spritesheet('bullet', 'assets/bullet.png', 19, 17); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
-	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://raw.githubusercontent.com/mozilla/BrowserQuest/master/client/img/3/octocat.png
 }
 
 var player;
