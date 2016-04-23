@@ -15,15 +15,18 @@ function preload() {
 var player;
 var walls;
 var cursors;
-var stars;
+var enemies;
 var score = 0;
 var scoreText;
+var pad1;
 
 function create() {
+	// game setup
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
 	game.add.sprite(0, 0, 'bground');
 
+	// level setup
 	walls = game.add.group();
 
 	walls.enableBody = true;
@@ -40,29 +43,22 @@ function create() {
 
 	wall.body.immovable = true;
 
-	player = game.add.sprite(game.world.width/2, game.world.height - 150, 'dude');
+	game.input.onDown.add(dump, this);
 
-	game.physics.arcade.enable(player);
+	pad1 = new Gamepad(game).init();
 
-	player.body.bounce.y = 0.1;
-	player.body.gravity.y = 500;
-	player.body.collideWorldBounds = true;
+	player = new Player(game, pad1);
+	player.initialize();
 
-	player.animations.add('left', [0, 1, 2, 3], 10, true);
-	player.animations.add('right', [5, 6, 7, 8], 10, true);
+	// enemy setup
+	enemies = game.add.group();
 
-	cursors = game.input.keyboard.createCursorKeys();
+	enemies.enableBody = true;
 
-	stars = game.add.group();
+	for (var i = 1; i < 7; i++) {
+		var enemy = enemies.create(i * 65, 0, 'star');
 
-	stars.enableBody = true;
-
-	for (var i = 0; i < 12; i++) {
-		var star = stars.create(i * 70, 0, 'star');
-
-		star.body.gravity.y = 200;
-
-		star.body.bounce.y = 0.7 * Math.random() * 0.2;
+		enemy.body.gravity.y = 500;
 	}
 
 	scoreText = game.add.text(16, 16, 'Score: 0', {
@@ -71,29 +67,23 @@ function create() {
 	});
 }
 
+function dump() {
+
+    game.debug.text(pad1);
+
+}
+
 function update() {
-	game.physics.arcade.collide(player, walls);
+	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
 
-	game.physics.arcade.collide(stars, walls);
+	game.physics.arcade.collide(enemies, walls); // enemy collision with walls
 
-	game.physics.arcade.overlap(player, stars, collectStar, null, this);
+	game.physics.arcade.overlap(player.getSprite(), enemies, collectStar, null, this);
 
-	player.body.velocity.x = 0;
+	player.update();
 
-	if (cursors.left.isDown) {
-		player.body.velocity.x = -250;
-		player.animations.play('left');
-	} else if (cursors.right.isDown) {
-		player.body.velocity.x = 250;
-		player.animations.play('right');
-	} else {
-		player.animations.stop();
-		player.frame = 4;
-	}
+    game.debug.text(pad1);
 
-	if (cursors.up.isDown && player.body.touching.down) {
-		player.body.velocity.y = -400;
-	}
 }
 
 function collectStar(player, star) {
