@@ -11,13 +11,14 @@ function preload() {
 	game.load.image('issue', 'assets/issue.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/issue.svg
 	game.load.image('extra', 'assets/extra.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/file-code.svg
 	game.load.image('watchers', 'assets/watchers.png'); // sprites taken from https://github.com/github/octicons/blob/master/svg/eye.svg
-	game.load.image('release', 'assets/release.png'); // sprites taken from https://github.com/github/octicons/blob/master/svg/eye.svg
+	game.load.image('release', 'assets/release.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/tag.svg
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
 }
 
 var player;
 var walls;
+var ground;
 var enemies;
 var score;
 var pad;
@@ -33,7 +34,7 @@ function create() {
 
 	walls.enableBody = true;
 
-	var ground = walls.create(0, game.world.height - 50, 'ground');
+	ground = walls.create(0, game.world.height - 50, 'ground');
 
 	ground.body.immovable = true;
 
@@ -54,7 +55,9 @@ function create() {
 	enemies = new Enemy(game);
 	enemies.init();
 
-	enemies.spawn();
+	releases = new Release(game);
+	releases.init();
+
 
 	score = new Score(game);
 	score.setScoreElem();
@@ -72,6 +75,8 @@ function physicsHandler() {
 	game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
 	game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
 	game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
+	game.physics.arcade.overlap(player.getSprite(), releases.getReleases(), goodRelease, null, this);
+	game.physics.arcade.overlap(ground, releases.getReleases(), failRelease, null, this);
 }
 
 // Controls
@@ -95,8 +100,14 @@ function takeDamage(player, enemy) {
 	score.modScore(-2);
 }
 
-function takeLessDamage() {
-	score.modScore(-1);
+function goodRelease(player, release) {
+	score.modScore(100);
+	release.kill();
+}
+
+function failRelease(ground, release) {
+	score.modScore(-50);
+	release.kill();
 }
 
 function dealDamage(bullet, enemy) {

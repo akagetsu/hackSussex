@@ -26,7 +26,7 @@ Score.prototype.setScoreElem = function setScoreElem() {
 };
 
 Score.prototype.getScore = function getScore() {
-	return this.score;
+	return this.val;
 };
 
 Score.prototype.getText = function getText() {
