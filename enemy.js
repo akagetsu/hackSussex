@@ -17,6 +17,12 @@ Enemy.prototype.spawn = function spawn() {
 	enemy.scale.setTo(1.5);
 };
 
+Enemy.prototype.nuke = function nuke() {
+	this.enemyHolder.forEach(function(enem) {
+		enem.kill();
+	});
+};
+
 Enemy.prototype.getEnemies = function getEnemies() {
 	return this.enemyHolder;
 };

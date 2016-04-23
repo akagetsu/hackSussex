@@ -103,6 +103,8 @@ function takeDamage(player, enemy) {
 function goodRelease(player, release) {
 	score.modScore(100);
 	release.kill();
+	if (Math.random() > 0.8)
+		enemies.nuke();
 }
 
 function failRelease(ground, release) {
