@@ -5,14 +5,15 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
 });
 
 function preload() {
-	game.load.image('sky', 'assets/sky.png');
-	game.load.image('ground', 'assets/platform.png');
+	game.load.image('bground', 'assets/background.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
+	game.load.image('wall', 'assets/wall.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
+	game.load.image('ground', 'assets/ground.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('star', 'assets/star.png');
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
 
 var player;
-var platforms;
+var walls;
 var cursors;
 var stars;
 var score = 0;
@@ -21,27 +22,25 @@ var scoreText;
 function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
-	game.add.sprite(0, 0, 'sky');
+	game.add.sprite(0, 0, 'bground');
 
-	platforms = game.add.group();
+	walls = game.add.group();
 
-	platforms.enableBody = true;
+	walls.enableBody = true;
 
-	var ground = platforms.create(0, game.world.height - 64, 'ground');
-
-	ground.scale.setTo(2, 2);
+	var ground = walls.create(0, game.world.height - 50, 'ground');
 
 	ground.body.immovable = true;
 
-	var ledge = platforms.create(400, 400, 'ground');
+	var wall = walls.create(0, 0, 'wall');
 
-	ledge.body.immovable = true;
+	wall.body.immovable = true;
 
-	ledge = platforms.create(-150, 250, 'ground');
+	wall = walls.create(game.world.width - 50, 0, 'wall');
 
-	ledge.body.immovable = true;
+	wall.body.immovable = true;
 
-	player = game.add.sprite(32, game.world.height - 150, 'dude');
+	player = game.add.sprite(game.world.width/2, game.world.height - 150, 'dude');
 
 	game.physics.arcade.enable(player);
 
@@ -73,9 +72,9 @@ function create() {
 }
 
 function update() {
-	game.physics.arcade.collide(player, platforms);
+	game.physics.arcade.collide(player, walls);
 
-	game.physics.arcade.collide(stars, platforms);
+	game.physics.arcade.collide(stars, walls);
 
 	game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
