@@ -53,7 +53,7 @@ function create() {
 	for (var i = 1; i < 7; i++) {
 		var enemy = enemies.create(i * 65, 0, 'star');
 
-		enemy.body.gravity.y = 500;
+		enemy.body.gravity.y = 300;
 	}
 
 	scoreText = game.add.text(16, 16, 'Score: 0', {

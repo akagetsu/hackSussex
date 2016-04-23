@@ -14,8 +14,7 @@ Player.prototype.initialize = function initialize() {
 	this.pad = new Gamepad(this.game).init();
 	this.bullets = new Bullet(this.game).init();
 
-	this.sprite.body.bounce.y = 0.1;
-	this.sprite.body.gravity.y = 500;
+	this.sprite.body.gravity.y = 1000;
 	this.sprite.body.collideWorldBounds = true;
 
 	this.sprite.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -38,7 +37,7 @@ Player.prototype.update = function update() {
 	}
 
 	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && this.sprite.body.touching.down) {
-		this.sprite.body.velocity.y = -400;
+		this.sprite.body.velocity.y = -500;
 	}
 
 	if (this.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
