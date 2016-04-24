@@ -1,4 +1,4 @@
-# hackSussex
+# OctocatHasCommitmentIssues
 
 Legend has it that the mystical Octocat is working hard on publishing the perfect app.
 This of course can not be done without the help of fellow open source contributors.
@@ -19,12 +19,14 @@ The game can be played either with a gamepad or keyboard.
 From the menu select your preferred input and click start.
 
 Keyboard input:
+
 Left/Right arrows to move Octocat.
 Z to jump
 X to shoot
 P to restart game
 
 Gamepad input:
+
 Left/Right D-pad to move Octocat.
 B to jump
 Y to shoot
