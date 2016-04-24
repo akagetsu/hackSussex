@@ -17,6 +17,16 @@ function preload() {
 	game.load.image('start', 'assets/start.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
+	game.load.audio('intro', 'assets/intro.mp3'); // music taken from http://ericskiff.com/music/
+	game.load.audio('main', 'assets/main.mp3'); // music taken from http://ericskiff.com/music/
+	game.load.audio('shoot', 'assets/shoot.wav'); // generated using bfxr
+	game.load.audio('shoot2', 'assets/shoot2.wav'); // generated using bfxr
+	game.load.audio('explode', 'assets/explode.wav'); // generated using bfxr
+	game.load.audio('powerup', 'assets/powerup.wav'); // generated using bfxr
+	game.load.audio('jump', 'assets/jump.wav'); // generated using bfxr
+	game.load.audio('miss', 'assets/miss.wav'); // generated using bfxr
+	game.load.audio('hurt', 'assets/hurt.wav'); // generated using bfxr
+	game.load.audio('nuke', 'assets/nuke.wav'); // generated using bfxr
 }
 
 var player;
@@ -24,23 +34,33 @@ var walls;
 var ground;
 var enemies;
 var score;
+
 var pad;
 var cursors;
 var attKey;
 var jmpKey;
 var restartKey;
+
 var keyImg;
 var padImg;
 var startImg;
 
+var music;
+var shoot;
+var explode;
+var powerup;
+var jump;
+var miss;
+var hurt;
+var nuke;
+
 var options = {
 	sounds: true,
-	gamepad: false
+	gamepad: true
 };
 var gameState = {
 	menu: true,
-	game: false,
-	pause: false
+	game: false
 };
 
 function create() {
@@ -75,7 +95,7 @@ function create() {
 	jmpKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
 	restartKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
 
-	menus('menu');
+	menus();
 }
 
 function update() {
@@ -95,12 +115,19 @@ function physicsHandler() {
 	}
 }
 
-function menus(type) {
+function menus() {
 	gameState.game = false;
-	gameState[type] = true;
+	gameState.menu = true;
+	if(music)
+		music.stop();
+	music = game.add.audio('intro');
+	music.volume = 1;
+	music.play();
+	shoot = game.add.audio('shoot');
+	shoot.volume = 0.3;
 	keyImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 70, 'keyboard');
 	keyImg.inputEnabled = true;
-	keyImg.tint = 0x0000A0;
+	keyImg.tint = 0x8B0000;
 	keyImg.events.onInputDown.add(function() {
 		options.gamepad = false;
 		keyImg.tint = 0x0000A0;
@@ -109,7 +136,7 @@ function menus(type) {
 
 	padImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2, 'gamepad');
 	padImg.inputEnabled = true;
-	padImg.tint = 0x8B0000;
+	padImg.tint = 0x0000A0;
 	padImg.events.onInputDown.add(function() {
 		options.gamepad = true;
 		keyImg.tint = 0x8B0000;
@@ -120,6 +147,8 @@ function menus(type) {
 	startImg.inputEnabled = true;
 	startImg.tint = 0x008000;
 	startImg.events.onInputDown.add(function() {
+		music.stop();
+		shoot.play();
 		init();
 	}, this);
 }
@@ -129,8 +158,36 @@ function init() {
 	padImg.destroy();
 	startImg.destroy();
 
+	music = game.add.audio('main');
+	music.loop = true;
+	music.volume = 1;
+	music.play();
+
+	shoot = game.add.audio('shoot2');
+	shoot.volume = 0.2;
+	shoot.allowMultiple = true;
+
+	powerup = game.add.audio('powerup');
+	powerup.volume = 0.5;
+
+	explode = game.add.audio('explode');
+	explode.volume = 0.3;
+	explode.allowMultiple = true;
+
+	jump = game.add.audio('jump');
+	jump.volume = 0.5;
+
+	miss = game.add.audio('miss');
+	miss.volume = 0.5;
+
+	hurt = game.add.audio('hurt');
+	hurt.volume = 0.2;
+	hurt.allowMultiple = true;
+
+	nuke = game.add.audio('nuke');
+	nuke.volume = 1;
+
 	gameState.menu = false;
-	gameState.pause = false;
 	gameState.game = true;
 
 	enemies = new Enemy(game);
@@ -155,12 +212,14 @@ function controlHandler() {
 
 			if (pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
 				player.jump();
+				jump.play();
 			}
 
 			if (pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
 				player.fire();
+				shoot.play();
 			}
-			if(pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+			if (pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
 				game.state.restart();
 			}
 		} else {
@@ -171,14 +230,16 @@ function controlHandler() {
 			}
 
 			if (jmpKey.isDown && player.getSprite().body.touching.down) {
+				jump.play();
 				player.jump();
 			}
 
 			if (attKey.isDown) {
 				player.fire();
+				shoot.play();
 			}
 
-			if(restartKey.isDown) {
+			if (restartKey.isDown) {
 				game.state.restart();
 			}
 		}
@@ -187,21 +248,27 @@ function controlHandler() {
 
 function takeDamage(player, enemy) {
 	score.modScore(-2);
+	hurt.play();
 }
 
 function goodRelease(player, release) {
+	powerup.play();
 	score.modScore(100);
 	release.kill();
-	if (Math.random() > 0.8)
+	if (Math.random() > 0.8) {
 		enemies.nuke();
+		nuke.play();
+	}
 }
 
 function failRelease(ground, release) {
 	score.modScore(-50);
 	release.kill();
+	miss.play();
 }
 
 function dealDamage(bullet, enemy) {
+	explode.play();
 	enemy.kill();
 	bullet.kill();
 	score.modScore(10);
