@@ -28,7 +28,7 @@ var pad;
 var cursors;
 var attKey;
 var jmpKey;
-var pauseKey;
+var restartKey;
 var keyImg;
 var padImg;
 var startImg;
@@ -66,23 +66,20 @@ function create() {
 
 	wall.body.immovable = true;
 
+	player = new Player(game);
+	player.initialize();
+
 	pad = new Gamepad(game).init();
 	cursors = game.input.keyboard.createCursorKeys();
 	attKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
 	jmpKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-	pauseKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
+	restartKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
 
-	player = new Player(game);
-	player.initialize();
-
-	menus();
+	menus('menu');
 }
 
 function update() {
 	physicsHandler();
-	if (gameState.menu || gameState.pause) {
-		return;
-	}
 	player.update();
 	controlHandler();
 }
@@ -90,7 +87,6 @@ function update() {
 function physicsHandler() {
 	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
 	if (gameState.game) {
-
 		game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
 		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
 		game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
@@ -99,7 +95,9 @@ function physicsHandler() {
 	}
 }
 
-function menus() {
+function menus(type) {
+	gameState.game = false;
+	gameState[type] = true;
 	keyImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 70, 'keyboard');
 	keyImg.inputEnabled = true;
 	keyImg.tint = 0x0000A0;
@@ -128,10 +126,11 @@ function menus() {
 
 function init() {
 	keyImg.destroy();
-	startImg.destroy();
 	padImg.destroy();
+	startImg.destroy();
 
 	gameState.menu = false;
+	gameState.pause = false;
 	gameState.game = true;
 
 	enemies = new Enemy(game);
@@ -158,8 +157,11 @@ function controlHandler() {
 				player.jump();
 			}
 
-			if (pad.justPressed(Phaser.Gamepad.XBOX360_X, 100)) {
+			if (pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
 				player.fire();
+			}
+			if(pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+				game.state.restart();
 			}
 		} else {
 			if (cursors.left.isDown) {
@@ -174,6 +176,10 @@ function controlHandler() {
 
 			if (attKey.isDown) {
 				player.fire();
+			}
+
+			if(restartKey.isDown) {
+				game.state.restart();
 			}
 		}
 	}
