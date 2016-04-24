@@ -15,6 +15,7 @@ function preload() {
 	game.load.image('gamepad', 'assets/gamepad.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('keyboard', 'assets/keyboard.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('start', 'assets/start.png'); // font used http://www.dafont.com/8bit-wonder.font
+	game.load.image('win', 'assets/win.png'); // font used https://github.com/photonstorm/phaser-examples/blob/master/examples/assets/particlestorm/particles/white.png
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
 	game.load.audio('intro', 'assets/intro.mp3'); // music taken from http://ericskiff.com/music/
@@ -60,7 +61,8 @@ var options = {
 };
 var gameState = {
 	menu: true,
-	game: false
+	game: false,
+	end: false
 };
 
 function create() {
@@ -93,7 +95,7 @@ function create() {
 	cursors = game.input.keyboard.createCursorKeys();
 	attKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
 	jmpKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-	restartKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
+	restartKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 
 	menus();
 }
@@ -102,6 +104,7 @@ function update() {
 	physicsHandler();
 	player.update();
 	controlHandler();
+	checkEndGame();
 }
 
 function physicsHandler() {
@@ -118,7 +121,7 @@ function physicsHandler() {
 function menus() {
 	gameState.game = false;
 	gameState.menu = true;
-	if(music)
+	if (music)
 		music.stop();
 	music = game.add.audio('intro');
 	music.volume = 1;
@@ -243,6 +246,35 @@ function controlHandler() {
 				game.state.restart();
 			}
 		}
+	} else if (gameState.menu) {
+		if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || cursors.up.isDown && options.gamepad) {
+			options.gamepad = false;
+			keyImg.tint = 0x0000A0;
+			padImg.tint = 0x8B0000;
+		} else if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || cursors.down.isDown && !options.gamepad) {
+			options.gamepad = true;
+			keyImg.tint = 0x8B0000;
+			padImg.tint = 0x0000A0;
+		}
+
+		if (restartKey.isDown || pad.justPressed(Phaser.Gamepad.XBOX360_Y)) {
+			music.stop();
+			shoot.play();
+			init();
+		}
+	} else {
+		if (restartKey.isDown || pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+			game.state.restart();
+		}
+	}
+}
+
+function checkEndGame() {
+	if (score && score.getScore() >= 2000 && !gameState.end) {
+		gameState.game = false;
+		gameState.end = true;
+
+		game.add.sprite(this.game.width / 2 - 90, this.game.height / 2, 'win');
 	}
 }
 
