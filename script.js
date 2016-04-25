@@ -9,7 +9,6 @@ function preload() {
 	game.load.image('wall', 'assets/wall.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('ground', 'assets/ground.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
 	game.load.image('issue', 'assets/issue.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/issue.svg
-	game.load.image('extra', 'assets/extra.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/file-code.svg
 	game.load.image('watchers', 'assets/watchers.png'); // sprites taken from https://github.com/github/octicons/blob/master/svg/eye.svg
 	game.load.image('release', 'assets/release.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/tag.svg
 	game.load.image('gamepad', 'assets/gamepad.png'); // font used http://www.dafont.com/8bit-wonder.font
@@ -264,7 +263,7 @@ function controlHandler() {
 		}
 	} else {
 		if (restartKey.isDown || pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
-			game.state.restart();
+			create();
 		}
 	}
 }
