@@ -15,6 +15,8 @@ function preload() {
 	game.load.image('keyboard', 'assets/keyboard.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('start', 'assets/start.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('win', 'assets/win.png'); // font used https://github.com/photonstorm/phaser-examples/blob/master/examples/assets/particlestorm/particles/white.png
+	game.load.image('btnup', 'assets/btnup.png'); // sprite generated using GIMP
+	game.load.image('btndn', 'assets/btndn.png'); // sprite generated using GIMP
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
 	game.load.audio('intro', 'assets/intro.mp3'); // music taken from http://ericskiff.com/music/
@@ -27,6 +29,7 @@ function preload() {
 	game.load.audio('miss', 'assets/miss.wav'); // generated using bfxr
 	game.load.audio('hurt', 'assets/hurt.wav'); // generated using bfxr
 	game.load.audio('nuke', 'assets/nuke.wav'); // generated using bfxr
+
 }
 
 var player;
@@ -45,6 +48,17 @@ var keyImg;
 var padImg;
 var startImg;
 
+var leftTouch;
+var rightTouch;
+var jumpTouch;
+var killTouch;
+var touchDir = {
+	left: false,
+	right: false,
+	jump: false,
+	kill: false
+};
+
 var music;
 var shoot;
 var explode;
@@ -56,7 +70,8 @@ var nuke;
 
 var options = {
 	sounds: true,
-	gamepad: true
+	gamepad: true,
+	touch: false
 };
 var gameState = {
 	menu: true,
@@ -200,6 +215,52 @@ function init() {
 
 	score = new Score(game);
 	score.setScoreElem();
+
+	if (options.touch) {
+		leftTouch = game.add.sprite(20, this.game.height - 60, 'btnup');
+		leftTouch.inputEnabled = true;
+		leftTouch.events.onInputDown.add(function() {
+			leftTouch.loadTexture('btndn');
+			touchDir.left = true;
+		}, this);
+		leftTouch.events.onInputUp.add(function() {
+			leftTouch.loadTexture('btnup');
+			touchDir.left = false;
+		}, this);
+
+		rightTouch = game.add.sprite(150, this.game.height - 60, 'btnup');
+		rightTouch.inputEnabled = true;
+		rightTouch.events.onInputDown.add(function() {
+			rightTouch.loadTexture('btndn');
+			touchDir.right = true;
+		}, this);
+		rightTouch.events.onInputUp.add(function() {
+			rightTouch.loadTexture('btnup');
+			touchDir.right = false;
+		}, this);
+
+		jumpTouch = game.add.sprite(280, this.game.height - 60, 'btnup');
+		jumpTouch.inputEnabled = true;
+		jumpTouch.events.onInputDown.add(function() {
+			jumpTouch.loadTexture('btndn');
+			touchDir.jump = true;
+		}, this);
+		jumpTouch.events.onInputUp.add(function() {
+			jumpTouch.loadTexture('btnup');
+			touchDir.jump = false;
+		}, this);
+
+		killTouch = game.add.sprite(410, this.game.height - 60, 'btnup');
+		killTouch.inputEnabled = true;
+		killTouch.events.onInputDown.add(function() {
+			killTouch.loadTexture('btndn');
+			touchDir.kill = true;
+		}, this);
+		killTouch.events.onInputUp.add(function() {
+			killTouch.loadTexture('btnup');
+			touchDir.kill = false;
+		}, this);
+	}
 }
 
 // Controls
@@ -224,7 +285,7 @@ function controlHandler() {
 			if (pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
 				game.state.restart();
 			}
-		} else {
+		} else if (!options.gamepad && !options.touch) {
 			if (cursors.left.isDown) {
 				player.move(-350);
 			} else if (cursors.right.isDown) {
@@ -243,6 +304,22 @@ function controlHandler() {
 
 			if (restartKey.isDown) {
 				game.state.restart();
+			}
+		} else if (!options.gamepad && options.touch) {
+			if (touchDir.left) {
+				player.move(-350);
+			} else if (touchDir.right) {
+				player.move(350);
+			}
+
+			if (touchDir.jump && player.getSprite().body.touching.down) {
+				jump.play();
+				player.jump();
+			}
+
+			if (touchDir.kill) {
+				player.fire();
+				shoot.play();
 			}
 		}
 	} else if (gameState.menu) {
