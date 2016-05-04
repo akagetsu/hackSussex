@@ -37,6 +37,7 @@ var walls;
 var ground;
 var enemies;
 var score;
+var soundMan;
 
 var pad;
 var cursors;
@@ -58,15 +59,6 @@ var touchDir = {
 	jump: false,
 	kill: false
 };
-
-var music;
-var shoot;
-var explode;
-var powerup;
-var jump;
-var miss;
-var hurt;
-var nuke;
 
 var options = {
 	sounds: true,
@@ -111,6 +103,9 @@ function create() {
 	jmpKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
 	restartKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
 
+	soundMan = new SoundMan(game);
+	soundMan.setup();
+
 	menus();
 }
 
@@ -135,13 +130,11 @@ function physicsHandler() {
 function menus() {
 	gameState.game = false;
 	gameState.menu = true;
-	if (music)
-		music.stop();
-	music = game.add.audio('intro');
-	music.volume = 1;
-	music.play();
-	shoot = game.add.audio('shoot');
-	shoot.volume = 0.3;
+	soundMan.stopSound('intro');
+	soundMan.stopSound('main');
+
+	soundMan.playSound('intro');
+
 	keyImg = game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 70, 'keyboard');
 	keyImg.inputEnabled = true;
 	keyImg.tint = 0x8B0000;
@@ -164,8 +157,8 @@ function menus() {
 	startImg.inputEnabled = true;
 	startImg.tint = 0x008000;
 	startImg.events.onInputDown.add(function() {
-		music.stop();
-		shoot.play();
+		soundMan.stopSound('intro');
+		soundMan.playSound('shoot1');
 		init();
 	}, this);
 }
@@ -175,34 +168,7 @@ function init() {
 	padImg.destroy();
 	startImg.destroy();
 
-	music = game.add.audio('main');
-	music.loop = true;
-	music.volume = 1;
-	music.play();
-
-	shoot = game.add.audio('shoot2');
-	shoot.volume = 0.2;
-	shoot.allowMultiple = true;
-
-	powerup = game.add.audio('powerup');
-	powerup.volume = 0.5;
-
-	explode = game.add.audio('explode');
-	explode.volume = 0.3;
-	explode.allowMultiple = true;
-
-	jump = game.add.audio('jump');
-	jump.volume = 0.5;
-
-	miss = game.add.audio('miss');
-	miss.volume = 0.5;
-
-	hurt = game.add.audio('hurt');
-	hurt.volume = 0.2;
-	hurt.allowMultiple = true;
-
-	nuke = game.add.audio('nuke');
-	nuke.volume = 1;
+	soundMan.playSound('main');
 
 	gameState.menu = false;
 	gameState.game = true;
@@ -275,14 +241,15 @@ function controlHandler() {
 
 			if (pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
 				player.jump();
-				jump.play();
+				soundMan.playSound('jump');
 			}
 
 			if (pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
 				player.fire();
-				shoot.play();
+				soundMan.playSound('shoot2');
 			}
 			if (pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+				soundMan.stopSound('main');
 				game.state.restart();
 			}
 		} else if (!options.gamepad && !options.touch) {
@@ -293,16 +260,17 @@ function controlHandler() {
 			}
 
 			if (jmpKey.isDown && player.getSprite().body.touching.down) {
-				jump.play();
+				soundMan.playSound('jump');
 				player.jump();
 			}
 
 			if (attKey.isDown) {
 				player.fire();
-				shoot.play();
+				soundMan.playSound('shoot2');
 			}
 
 			if (restartKey.isDown) {
+				soundMan.stopSound('main');
 				game.state.restart();
 			}
 		} else if (!options.gamepad && options.touch) {
@@ -313,13 +281,13 @@ function controlHandler() {
 			}
 
 			if (touchDir.jump && player.getSprite().body.touching.down) {
-				jump.play();
+				soundMan.playSound('jump');
 				player.jump();
 			}
 
 			if (touchDir.kill) {
 				player.fire();
-				shoot.play();
+				soundMan.playSound('shoot2');
 			}
 		}
 	} else if (gameState.menu) {
@@ -334,8 +302,9 @@ function controlHandler() {
 		}
 
 		if (restartKey.isDown || pad.justPressed(Phaser.Gamepad.XBOX360_Y)) {
-			music.stop();
-			shoot.play();
+			soundMan.stopSound('intro');
+			soundMan.stopSound('main');
+			soundMan.playSound('shoot1');
 			init();
 		}
 	} else {
@@ -356,27 +325,27 @@ function checkEndGame() {
 
 function takeDamage(player, enemy) {
 	score.modScore(-2);
-	hurt.play();
+	soundMan.playSound('hurt');
 }
 
 function goodRelease(player, release) {
-	powerup.play();
+	soundMan.playSound('powerup');
 	score.modScore(100);
 	release.kill();
 	if (Math.random() > 0.8) {
 		enemies.nuke();
-		nuke.play();
+		soundMan.playSound('nuke');
 	}
 }
 
 function failRelease(ground, release) {
 	score.modScore(-50);
 	release.kill();
-	miss.play();
+	soundMan.playSound('miss');
 }
 
 function dealDamage(bullet, enemy) {
-	explode.play();
+	soundMan.playSound('explode');
 	enemy.kill();
 	bullet.kill();
 	score.modScore(10);
