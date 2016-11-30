@@ -29,8 +29,7 @@ function preload() {
 }
 
 var player,
-	walls,
-	ground,
+	scene,
 	enemies,
 	score,
 	soundMan,
@@ -66,21 +65,7 @@ function create() {
 	game.add.sprite(0, 0, 'bground');
 
 	// level setup
-	walls = game.add.group();
-
-	walls.enableBody = true;
-
-	ground = walls.create(0, game.world.height - 50, 'ground');
-
-	ground.body.immovable = true;
-
-	var wall = walls.create(0, 0, 'wall');
-
-	wall.body.immovable = true;
-
-	wall = walls.create(game.world.width - 50, 0, 'wall');
-
-	wall.body.immovable = true;
+	scene = new Scene(game);
 
 	player = new Player(game).initialise();
 
@@ -102,13 +87,13 @@ function update() {
 }
 
 function physicsHandler() {
-	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
+	game.physics.arcade.collide(player.getSprite(), scene.walls); // player collision with walls
 	if (gameState.game) {
-		game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
+		game.physics.arcade.collide(enemies.getEnemies(), scene.walls); // enemy collision with walls
 		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
 		game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
 		game.physics.arcade.overlap(player.getSprite(), releases.getReleases(), goodRelease, null, this);
-		game.physics.arcade.overlap(ground, releases.getReleases(), failRelease, null, this);
+		game.physics.arcade.overlap(scene.ground, releases.getReleases(), failRelease, null, this);
 	}
 }
 
