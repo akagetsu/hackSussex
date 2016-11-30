@@ -8,7 +8,7 @@ Controls.prototype.initialiseGamepad = function initialiseGamepad() {
     this.game.input.gamepad.start();
     this.pad = game.input.gamepad.pad1;
 
-    return this.pad;
+    return this;
 };
 
 Controls.prototype.initialiseKeyboard = function initialiseKeyboard() {
@@ -19,5 +19,5 @@ Controls.prototype.initialiseKeyboard = function initialiseKeyboard() {
         restartKey: this.game.input.keyboard.addKey(Phaser.Keyboard.P)
     };
 
-    return this.keyboard;
+    return this;
 };

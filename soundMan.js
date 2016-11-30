@@ -11,7 +11,7 @@ function SoundMan(game) {
 	this.nuke = null;
 }
 
-SoundMan.prototype.setup = function setup() {
+SoundMan.prototype.initialise = function initialise() {
 	this.intro = this.game.add.audio('intro');
 	this.intro.volume = 1;
 
@@ -45,16 +45,18 @@ SoundMan.prototype.setup = function setup() {
 
 	this.nuke = this.game.add.audio('nuke');
 	this.nuke.volume = 1;
+
+	return this;
 };
 
 SoundMan.prototype.playSound = function playSound(sound) {
-	if(!this[sound])
+	if (!this[sound])
 		return;
 	this[sound].play();
 };
 
 SoundMan.prototype.stopSound = function stopSound(sound) {
-	if(!this[sound])
+	if (!this[sound])
 		return;
 	this[sound].stop();
 };

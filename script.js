@@ -60,21 +60,19 @@ var player,
 
 function create() {
 	// game setup
-	game.physics.startSystem(Phaser.Physics.ARCADE);
-
-	game.add.sprite(0, 0, 'bground');
+	game = new Game().initialise();
 
 	// level setup
 	scene = new Scene(game);
 
 	player = new Player(game).initialise();
 
-	controls = new Controls(game);
-	controls.initialiseGamepad();
-	controls.initialiseKeyboard();
+	controls = new Controls(game)
+		.initialiseGamepad()
+		.initialiseKeyboard();
 
-	soundMan = new SoundMan(game);
-	soundMan.setup();
+	soundMan = new SoundMan(game)
+		.initialise();
 
 	menus();
 }
