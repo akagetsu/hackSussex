@@ -1,8 +1,4 @@
-var game = new Phaser.Game(480, 640, Phaser.AUTO, '', {
-	preload: preload,
-	create: create,
-	update: update
-});
+var game = new Game();
 
 function preload() {
 	game.load.image('bground', 'assets/background.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
