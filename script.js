@@ -28,44 +28,36 @@ function preload() {
 
 }
 
-var player;
-var walls;
-var ground;
-var enemies;
-var score;
-var soundMan;
-
-var pad;
-var cursors;
-var attKey;
-var jmpKey;
-var restartKey;
-
-var keyImg;
-var padImg;
-var startImg;
-
-var leftTouch;
-var rightTouch;
-var jumpTouch;
-var killTouch;
-var touchDir = {
-	left: false,
-	right: false,
-	jump: false,
-	kill: false
-};
-
-var options = {
-	sounds: true,
-	gamepad: true,
-	touch: false
-};
-var gameState = {
-	menu: true,
-	game: false,
-	end: false
-};
+var player,
+	walls,
+	ground,
+	enemies,
+	score,
+	soundMan,
+	controls,
+	keyImg,
+	padImg,
+	startImg,
+	leftTouch,
+	rightTouch,
+	jumpTouch,
+	killTouch,
+	touchDir = {
+		left: false,
+		right: false,
+		jump: false,
+		kill: false
+	},
+	options = {
+		sounds: true,
+		gamepad: true,
+		touch: false
+	},
+	gameState = {
+		menu: true,
+		game: false,
+		end: false
+	};
 
 function create() {
 	// game setup
@@ -92,11 +84,9 @@ function create() {
 
 	player = new Player(game).initialise();
 
-	pad = new Gamepad(game).init();
-	cursors = game.input.keyboard.createCursorKeys();
-	attKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
-	jmpKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
-	restartKey = game.input.keyboard.addKey(Phaser.Keyboard.P);
+	controls = new Controls(game);
+	controls.initialiseGamepad();
+	controls.initialiseKeyboard();
 
 	soundMan = new SoundMan(game);
 	soundMan.setup();
@@ -228,43 +218,43 @@ function init() {
 function controlHandler() {
 	if (gameState.game) {
 		if (options.gamepad) {
-			if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
+			if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
 				player.move(-350);
-			} else if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
+			} else if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
 				player.move(350);
 			}
 
-			if (pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
+			if (controls.pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
 				player.jump();
 				soundMan.playSound('jump');
 			}
 
-			if (pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
+			if (controls.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
 				player.fire();
 				soundMan.playSound('shoot2');
 			}
-			if (pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+			if (controls.pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
 				soundMan.stopSound('main');
 				game.state.restart();
 			}
 		} else if (!options.gamepad && !options.touch) {
-			if (cursors.left.isDown) {
+			if (controls.keyboard.cursorKeys.left.isDown) {
 				player.move(-350);
-			} else if (cursors.right.isDown) {
+			} else if (controls.keyboard.cursorKeys.right.isDown) {
 				player.move(350);
 			}
 
-			if (jmpKey.isDown && player.getSprite().body.touching.down) {
+			if (controls.keyboard.jumpKey.isDown && player.getSprite().body.touching.down) {
 				soundMan.playSound('jump');
 				player.jump();
 			}
 
-			if (attKey.isDown) {
+			if (controls.keyboard.attackKey.isDown) {
 				player.fire();
 				soundMan.playSound('shoot2');
 			}
 
-			if (restartKey.isDown) {
+			if (controls.keyboard.restartKey.isDown) {
 				soundMan.stopSound('main');
 				game.state.restart();
 			}
@@ -286,24 +276,24 @@ function controlHandler() {
 			}
 		}
 	} else if (gameState.menu) {
-		if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || cursors.up.isDown && options.gamepad) {
+		if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || controls.keyboard.cursorKeys.up.isDown && options.gamepad) {
 			options.gamepad = false;
 			keyImg.tint = 0x0000A0;
 			padImg.tint = 0x8B0000;
-		} else if (pad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || cursors.down.isDown && !options.gamepad) {
+		} else if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || controls.keyboard.cursorKeys.down.isDown && !options.gamepad) {
 			options.gamepad = true;
 			keyImg.tint = 0x8B0000;
 			padImg.tint = 0x0000A0;
 		}
 
-		if (restartKey.isDown || pad.justPressed(Phaser.Gamepad.XBOX360_Y)) {
+		if (controls.keyboard.restartKey.isDown || controls.pad.justPressed(Phaser.Gamepad.XBOX360_Y)) {
 			soundMan.stopSound('intro');
 			soundMan.stopSound('main');
 			soundMan.playSound('shoot1');
 			init();
 		}
 	} else {
-		if (restartKey.isDown || pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+		if (controls.keyboard.restartKey.isDown || controls.pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
 			create();
 		}
 	}
