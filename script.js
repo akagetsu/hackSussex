@@ -94,8 +94,7 @@ function create() {
 
 	wall.body.immovable = true;
 
-	player = new Player(game);
-	player.initialize();
+	player = new Player(game).initialise();
 
 	pad = new Gamepad(game).init();
 	cursors = game.input.keyboard.createCursorKeys();

@@ -6,7 +6,7 @@ function Player(game) {
 	this.fireFate = 100;
 }
 
-Player.prototype.initialize = function initialize() {
+Player.prototype.initialise = function initialize() {
 	this.sprite = this.game.add.sprite(game.world.width / 2, game.world.height - 150, 'dude');
 	this.game.physics.arcade.enable(this.sprite);
 
@@ -17,6 +17,8 @@ Player.prototype.initialize = function initialize() {
 
 	this.sprite.animations.add('dude', [0, 1, 2, 3], 3, true);
 	this.sprite.animations.play('dude');
+
+	return this;
 };
 
 Player.prototype.move = function move(dirSpd) {
