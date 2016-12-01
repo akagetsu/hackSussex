@@ -1,8 +1,7 @@
 var app = new App(),
 	game = app.game,
 	player = new Player(),
-	walls,
-	ground,
+	scene = new Scene(),
 	enemies,
 	score,
 	soundMan = new SoundMan(),
@@ -45,8 +44,10 @@ function preload() {
 	game.load.image('win', 'assets/win.png'); // font used https://github.com/photonstorm/phaser-examples/blob/master/examples/assets/particlestorm/particles/white.png
 	game.load.image('btnup', 'assets/btnup.png'); // sprite generated using GIMP
 	game.load.image('btndn', 'assets/btndn.png'); // sprite generated using GIMP
+
 	game.load.spritesheet('bullet', 'assets/bullet.png', 14, 16); // sprites taken from http://www.spriters-resource.com/snes/smarioworld/sheet/63051/
 	game.load.spritesheet('dude', 'assets/dude.png', 96, 86); // sprites taken from https://github.com/mozilla/BrowserQuest/blob/master/client/img/3/octocat.png
+
 	game.load.audio('intro', 'assets/intro.mp3'); // music taken from http://ericskiff.com/music/
 	game.load.audio('main', 'assets/main.mp3'); // music taken from http://ericskiff.com/music/
 	game.load.audio('shoot', 'assets/shoot.wav'); // generated using bfxr
@@ -64,23 +65,7 @@ function create() {
 	// game setup
 	app.initialise();
 
-	// level setup
-	walls = game.add.group();
-
-	walls.enableBody = true;
-
-	ground = walls.create(0, game.world.height - 50, 'ground');
-
-	ground.body.immovable = true;
-
-	var wall = walls.create(0, 0, 'wall');
-
-	wall.body.immovable = true;
-
-	wall = walls.create(game.world.width - 50, 0, 'wall');
-
-	wall.body.immovable = true;
-
+	scene.initialise(game);
 	player.initialise(game);
 	controls.initialise(game);
 	soundMan.initialise(game);
@@ -96,13 +81,13 @@ function update() {
 }
 
 function physicsHandler() {
-	game.physics.arcade.collide(player.getSprite(), walls); // player collision with walls
+	game.physics.arcade.collide(player.getSprite(), scene.walls); // player collision with walls
 	if (gameState.game) {
-		game.physics.arcade.collide(enemies.getEnemies(), walls); // enemy collision with walls
+		game.physics.arcade.collide(enemies.getEnemies(), scene.walls); // enemy collision with walls
 		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
 		game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
 		game.physics.arcade.overlap(player.getSprite(), releases.getReleases(), goodRelease, null, this);
-		game.physics.arcade.overlap(ground, releases.getReleases(), failRelease, null, this);
+		game.physics.arcade.overlap(scene.ground, releases.getReleases(), failRelease, null, this);
 	}
 }
 
