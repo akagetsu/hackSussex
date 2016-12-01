@@ -31,6 +31,10 @@ Player.prototype.jump = function jump() {
 	this.sprite.body.velocity.y = -500;
 };
 
+Player.prototype.scenePhysics = function scenePhysics(walls) {
+	this.game.physics.arcade.collide(this.sprite, walls);
+};
+
 Player.prototype.update = function update() {
 	this.sprite.body.velocity.x = 0;
 };
