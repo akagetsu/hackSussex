@@ -17,11 +17,6 @@ Controls.prototype.initialise = function initialise(game) {
         restartKey: this.game.input.keyboard.addKey(Phaser.Keyboard.P)
     };
 
-    this.options = {
-        gamepad: false,
-        keyboard: false
-    };
-
     return this;
 };
 
@@ -44,64 +39,66 @@ Controls.prototype.handleMenuControls = function handleMenuControls() {
     }
 };
 
-Controls.prototype.handleGameControls = function handleGameControls() {
-    if (this.options.gamepad) {
-        if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
-            player.move(-350);
-        } else if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
-            player.move(350);
-        }
+Controls.prototype.handleKeyControls = function handleKeyControls() {
+    if (this.keyboard.cursorKeys.left.isDown) {
+        player.move(-350);
+    } else if (this.keyboard.cursorKeys.right.isDown) {
+        player.move(350);
+    }
 
-        if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
-            player.jump();
-            soundMan.playSound('jump');
-        }
+    if (this.keyboard.jumpKey.isDown && player.getSprite().body.touching.down) {
+        soundMan.playSound('jump');
+        player.jump();
+    }
 
-        if (this.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
-            player.fire();
-            soundMan.playSound('shoot2');
-        }
-        if (this.pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
-            soundMan.stopSound('main');
-            game.state.restart();
-        }
-    } else if (!this.options.gamepad && !this.options.touch) {
-        if (this.keyboard.cursorKeys.left.isDown) {
-            player.move(-350);
-        } else if (this.keyboard.cursorKeys.right.isDown) {
-            player.move(350);
-        }
+    if (this.keyboard.attackKey.isDown) {
+        player.fire();
+        soundMan.playSound('shoot2');
+    }
 
-        if (this.keyboard.jumpKey.isDown && player.getSprite().body.touching.down) {
-            soundMan.playSound('jump');
-            player.jump();
-        }
+    if (this.keyboard.restartKey.isDown) {
+        soundMan.stopSound('main');
+        game.state.restart();
+    }
+};
 
-        if (this.keyboard.attackKey.isDown) {
-            player.fire();
-            soundMan.playSound('shoot2');
-        }
+Controls.prototype.handleGamepadControls = function handleGamepadControls() {
+    if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
+        player.move(-350);
+    } else if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
+        player.move(350);
+    }
 
-        if (this.keyboard.restartKey.isDown) {
-            soundMan.stopSound('main');
-            game.state.restart();
-        }
-    } else if (!this.options.gamepad && this.options.touch) {
-        if (touchDir.left) {
-            player.move(-350);
-        } else if (touchDir.right) {
-            player.move(350);
-        }
+    if (this.pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
+        player.jump();
+        soundMan.playSound('jump');
+    }
 
-        if (touchDir.jump && player.getSprite().body.touching.down) {
-            soundMan.playSound('jump');
-            player.jump();
-        }
+    if (this.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
+        player.fire();
+        soundMan.playSound('shoot2');
+    }
+    if (this.pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
+        soundMan.stopSound('main');
+        game.state.restart();
+    }
+};
 
-        if (touchDir.kill) {
-            player.fire();
-            soundMan.playSound('shoot2');
-        }
+Controls.prototype.handleTouchControls = function handleTouchControls(touchDir) {
+    if (touchDir.left) {
+        player.move(-350);
+    } else if (touchDir.right) {
+        player.move(350);
+    }
+
+    if (touchDir.jump && player.getSprite().body.touching.down) {
+        soundMan.playSound('jump');
+        player.jump();
+    }
+
+    if (touchDir.kill) {
+        player.fire();
+        soundMan.playSound('shoot2');
     }
 };
 

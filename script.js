@@ -10,20 +10,16 @@ var app = new App(),
 	keyImg,
 	padImg,
 	startImg,
-	leftTouch,
-	rightTouch,
-	jumpTouch,
-	killTouch,
+	options = {
+		gamepad: false,
+		keyboard: false,
+		touch: true
+	},
 	touchDir = {
 		left: false,
 		right: false,
 		jump: false,
 		kill: false
-	},
-	options = {
-		sounds: true,
-		gamepad: true,
-		touch: false
 	},
 	gameState = {
 		menu: true,
@@ -77,7 +73,15 @@ function create() {
 function update() {
 	physicsHandler();
 	player.update();
-	controlHandler();
+
+	if (options.gamepad) {
+		controls.handleGamepadControls();
+	} else if (options.keyboard) {
+		controls.handleKeyControls();
+	} else if (options.touch && menu.touchDir) {
+		controls.handleTouchControls(menu.touchDir);
+	}
+
 	checkEndGame();
 }
 
@@ -112,49 +116,7 @@ function init() {
 	score.setScoreElem();
 
 	if (options.touch) {
-		leftTouch = game.add.sprite(20, this.game.height - 60, 'btnup');
-		leftTouch.inputEnabled = true;
-		leftTouch.events.onInputDown.add(function() {
-			leftTouch.loadTexture('btndn');
-			touchDir.left = true;
-		}, this);
-		leftTouch.events.onInputUp.add(function() {
-			leftTouch.loadTexture('btnup');
-			touchDir.left = false;
-		}, this);
-
-		rightTouch = game.add.sprite(150, this.game.height - 60, 'btnup');
-		rightTouch.inputEnabled = true;
-		rightTouch.events.onInputDown.add(function() {
-			rightTouch.loadTexture('btndn');
-			touchDir.right = true;
-		}, this);
-		rightTouch.events.onInputUp.add(function() {
-			rightTouch.loadTexture('btnup');
-			touchDir.right = false;
-		}, this);
-
-		jumpTouch = game.add.sprite(280, this.game.height - 60, 'btnup');
-		jumpTouch.inputEnabled = true;
-		jumpTouch.events.onInputDown.add(function() {
-			jumpTouch.loadTexture('btndn');
-			touchDir.jump = true;
-		}, this);
-		jumpTouch.events.onInputUp.add(function() {
-			jumpTouch.loadTexture('btnup');
-			touchDir.jump = false;
-		}, this);
-
-		killTouch = game.add.sprite(410, this.game.height - 60, 'btnup');
-		killTouch.inputEnabled = true;
-		killTouch.events.onInputDown.add(function() {
-			killTouch.loadTexture('btndn');
-			touchDir.kill = true;
-		}, this);
-		killTouch.events.onInputUp.add(function() {
-			killTouch.loadTexture('btnup');
-			touchDir.kill = false;
-		}, this);
+		menu.initialiseTouchMenu();
 	}
 }
 
