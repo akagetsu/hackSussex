@@ -1,4 +1,5 @@
-var game = new Game(),
+var app = new App(),
+	game = app.game,
 	player = new Player(),
 	walls,
 	ground,
@@ -61,9 +62,7 @@ function preload() {
 
 function create() {
 	// game setup
-	game.physics.startSystem(Phaser.Physics.ARCADE);
-
-	game.add.sprite(0, 0, 'bground');
+	app.initialise();
 
 	// level setup
 	walls = game.add.group();
