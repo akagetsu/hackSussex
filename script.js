@@ -196,85 +196,11 @@ function init() {
 // Controls
 function controlHandler() {
 	if (gameState.game) {
-		if (options.gamepad) {
-			if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT)) {
-				player.move(-350);
-			} else if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT)) {
-				player.move(350);
-			}
-
-			if (controls.pad.justPressed(Phaser.Gamepad.XBOX360_A) && player.getSprite().body.touching.down) {
-				player.jump();
-				soundMan.playSound('jump');
-			}
-
-			if (controls.pad.justPressed(Phaser.Gamepad.XBOX360_X)) {
-				player.fire();
-				soundMan.playSound('shoot2');
-			}
-			if (controls.pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
-				soundMan.stopSound('main');
-				game.state.restart();
-			}
-		} else if (!options.gamepad && !options.touch) {
-			if (controls.keyboard.cursorKeys.left.isDown) {
-				player.move(-350);
-			} else if (controls.keyboard.cursorKeys.right.isDown) {
-				player.move(350);
-			}
-
-			if (controls.keyboard.jumpKey.isDown && player.getSprite().body.touching.down) {
-				soundMan.playSound('jump');
-				player.jump();
-			}
-
-			if (controls.keyboard.attackKey.isDown) {
-				player.fire();
-				soundMan.playSound('shoot2');
-			}
-
-			if (controls.keyboard.restartKey.isDown) {
-				soundMan.stopSound('main');
-				game.state.restart();
-			}
-		} else if (!options.gamepad && options.touch) {
-			if (touchDir.left) {
-				player.move(-350);
-			} else if (touchDir.right) {
-				player.move(350);
-			}
-
-			if (touchDir.jump && player.getSprite().body.touching.down) {
-				soundMan.playSound('jump');
-				player.jump();
-			}
-
-			if (touchDir.kill) {
-				player.fire();
-				soundMan.playSound('shoot2');
-			}
-		}
+		controls.handleGameControls();
 	} else if (gameState.menu) {
-		if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || controls.keyboard.cursorKeys.up.isDown && options.gamepad) {
-			options.gamepad = false;
-			keyImg.tint = 0x0000A0;
-			padImg.tint = 0x8B0000;
-		} else if (controls.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN) || controls.keyboard.cursorKeys.down.isDown && !options.gamepad) {
-			options.gamepad = true;
-			keyImg.tint = 0x8B0000;
-			padImg.tint = 0x0000A0;
-		}
-
-		if (controls.keyboard.restartKey.isDown || controls.pad.justPressed(Phaser.Gamepad.XBOX360_Y)) {
-			soundMan.stopSound('intro');
-			soundMan.stopSound('main');
-			soundMan.playSound('shoot1');
-			init();
-		}
+		controls.handleMenuControls();
 	} else {
-		if (controls.keyboard.restartKey.isDown || controls.pad.justPressed(Phaser.Gamepad.XBOX360_START)) {
-			create();
-		}
+		controls.handleGenericControls();
 	}
 }
 
