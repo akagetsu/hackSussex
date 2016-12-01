@@ -61,7 +61,9 @@ var player,
 
 function create() {
 	// game setup
-	game = new Game().initialise();
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+
+	game.add.sprite(0, 0, 'bground');
 
 	// level setup
 	walls = game.add.group();
@@ -82,12 +84,12 @@ function create() {
 
 	player = new Player(game).initialise();
 
-	controls = new Controls(game)
-		.initialiseGamepad()
-		.initialiseKeyboard();
+	controls = new Controls(game);
+	controls.initialiseGamepad();
+	controls.initialiseKeyboard();
 
-	soundMan = new SoundMan(game)
-		.initialise();
+	soundMan = new SoundMan(game);
+	soundMan.setup();
 
 	menus();
 }

@@ -7,11 +7,3 @@ function Game() {
 
     return this.game;
 }
-
-Game.prototype.initialise = function initialise() {
-    this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    this.game.add.sprite(0, 0, 'bground');
-
-    return this.game;
-};
