@@ -2,16 +2,23 @@ function Menu() {
     this.game = null;
     this.keyImg = null;
     this.padImg = null;
+    this.touchImg = null;
     this.startImg = null;
     this.leftTouch = null;
     this.rightTouch = null;
     this.killTouch = null;
     this.jumpTouch = null;
     this.touchDir = null;
+    this.options = null;
 }
 
 Menu.prototype.initialise = function initialise(game) {
     this.game = game;
+    this.options = {
+        keyboard: true,
+        gamepad: false,
+        touch: false
+    };
 
     gameState.game = false;
     gameState.menu = true;
@@ -20,32 +27,51 @@ Menu.prototype.initialise = function initialise(game) {
 
     soundMan.playSound('intro');
 
-    keyImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 70, 'keyboard');
-    keyImg.inputEnabled = true;
-    keyImg.tint = 0x8B0000;
-    keyImg.events.onInputDown.add(function() {
-        options.gamepad = false;
-        keyImg.tint = 0x0000A0;
-        padImg.tint = 0x8B0000;
+    this.keyImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 100, 'keyboard');
+    this.keyImg.inputEnabled = true;
+    this.keyImg.tint = 0x0000A0;
+    this.keyImg.events.onInputDown.add(function() {
+        this.options.keyboard = true;
+        this.options.gamepad = false;
+        this.options.touch = false;
+        this.keyImg.tint = 0x0000A0;
+        this.padImg.tint = 0x8B0000;
+        this.touchImg.tint = 0x8B0000;
     }, this);
 
-    padImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2, 'gamepad');
-    padImg.inputEnabled = true;
-    padImg.tint = 0x0000A0;
-    padImg.events.onInputDown.add(function() {
-        options.gamepad = true;
-        keyImg.tint = 0x8B0000;
-        padImg.tint = 0x0000A0;
+    this.padImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 - 30, 'gamepad');
+    this.padImg.inputEnabled = true;
+    this.padImg.tint = 0x8B0000;
+    this.padImg.events.onInputDown.add(function() {
+        this.options.keyboard = false;
+        this.options.gamepad = true;
+        this.options.touch = false;
+        this.keyImg.tint = 0x8B0000;
+        this.padImg.tint = 0x0000A0;
+        this.touchImg.tint = 0x8B0000;
     }, this);
 
-    startImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 + 70, 'start');
-    startImg.inputEnabled = true;
-    startImg.tint = 0x008000;
-    startImg.events.onInputDown.add(function() {
+    this.touchImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 + 40, 'touch');
+    this.touchImg.inputEnabled = true;
+    this.touchImg.tint = 0x8B0000;
+    this.touchImg.events.onInputDown.add(function() {
+        this.options.keyboard = false;
+        this.options.gamepad = false;
+        this.options.touch = true;
+        this.keyImg.tint = 0x8B0000;
+        this.padImg.tint = 0x8B0000;
+        this.touchImg.tint = 0x0000A0;
+    }, this);
+
+    this.startImg = this.game.add.sprite(this.game.width / 2 - 90, this.game.height / 2 + 110, 'start');
+    this.startImg.inputEnabled = true;
+    this.startImg.tint = 0x008000;
+    this.startImg.events.onInputDown.add(function() {
         soundMan.stopSound('intro');
         soundMan.playSound('shoot1');
         init();
     }, this);
+    return this.options;
 };
 
 Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
@@ -99,4 +125,11 @@ Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
         this.killTouch.loadTexture('btnup');
         this.touchDir.kill = false;
     }, this);
+};
+
+Menu.prototype.destroyImg = function destroyImg() {
+    this.keyImg.destroy();
+    this.padImg.destroy();
+    this.startImg.destroy();
+    this.touchImg.destroy();
 };

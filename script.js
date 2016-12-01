@@ -37,6 +37,7 @@ function preload() {
 	game.load.image('release', 'assets/release.svg'); // sprites taken from https://github.com/github/octicons/blob/master/svg/tag.svg
 	game.load.image('gamepad', 'assets/gamepad.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('keyboard', 'assets/keyboard.png'); // font used http://www.dafont.com/8bit-wonder.font
+	game.load.image('touch', 'assets/touch.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('start', 'assets/start.png'); // font used http://www.dafont.com/8bit-wonder.font
 	game.load.image('win', 'assets/win.png'); // font used https://github.com/photonstorm/phaser-examples/blob/master/examples/assets/particlestorm/particles/white.png
 	game.load.image('btnup', 'assets/btnup.png'); // sprite generated using GIMP
@@ -67,7 +68,7 @@ function create() {
 	controls.initialise(game);
 	soundMan.initialise(game);
 
-	menu.initialise(game);
+	options = menu.initialise(game);
 }
 
 function update() {
@@ -97,9 +98,7 @@ function physicsHandler() {
 }
 
 function init() {
-	keyImg.destroy();
-	padImg.destroy();
-	startImg.destroy();
+	menu.destroyImg();
 
 	soundMan.playSound('main');
 
