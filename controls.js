@@ -1,17 +1,14 @@
-function Controls(game) {
-    this.game = game;
+function Controls() {
+    this.game = null;
     this.pad = null;
     this.keyboard = null;
 }
 
-Controls.prototype.initialiseGamepad = function initialiseGamepad() {
+Controls.prototype.initialise = function initialise(game) {
+    this.game = game;
     this.game.input.gamepad.start();
     this.pad = game.input.gamepad.pad1;
 
-    return this.pad;
-};
-
-Controls.prototype.initialiseKeyboard = function initialiseKeyboard() {
     this.keyboard = {
         cursorKeys: this.game.input.keyboard.createCursorKeys(),
         attackKey: this.game.input.keyboard.addKey(Phaser.Keyboard.X),
@@ -19,5 +16,5 @@ Controls.prototype.initialiseKeyboard = function initialiseKeyboard() {
         restartKey: this.game.input.keyboard.addKey(Phaser.Keyboard.P)
     };
 
-    return this.keyboard;
+    return this;
 };

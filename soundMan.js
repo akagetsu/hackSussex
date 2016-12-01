@@ -1,5 +1,5 @@
-function SoundMan(game) {
-	this.game = game;
+function SoundMan() {
+	this.game = null;
 	this.intro = null;
 	this.main = null;
 	this.shoot1 = null;
@@ -11,7 +11,9 @@ function SoundMan(game) {
 	this.nuke = null;
 }
 
-SoundMan.prototype.setup = function setup() {
+SoundMan.prototype.initialise = function initialise(game) {
+	this.game = game;
+
 	this.intro = this.game.add.audio('intro');
 	this.intro.volume = 1;
 

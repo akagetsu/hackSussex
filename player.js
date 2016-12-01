@@ -1,12 +1,14 @@
-function Player(game) {
-	this.game = game;
+function Player() {
+	this.game = null;
 	this.sprite = null;
 	this.bullets = null;
 	this.nextFire = 0;
 	this.fireFate = 100;
 }
 
-Player.prototype.initialise = function initialize() {
+Player.prototype.initialise = function initialize(game) {
+	this.game = game;
+
 	this.sprite = this.game.add.sprite(game.world.width / 2, game.world.height - 150, 'dude');
 	this.game.physics.arcade.enable(this.sprite);
 

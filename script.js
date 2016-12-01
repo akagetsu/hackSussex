@@ -1,4 +1,35 @@
-var game = new Game();
+var game = new Game(),
+	player = new Player(),
+	walls,
+	ground,
+	enemies,
+	score,
+	soundMan = new SoundMan(),
+	controls = new Controls(),
+	keyImg,
+	padImg,
+	startImg,
+	leftTouch,
+	rightTouch,
+	jumpTouch,
+	killTouch,
+	touchDir = {
+		left: false,
+		right: false,
+		jump: false,
+		kill: false
+	},
+	options = {
+		sounds: true,
+		gamepad: true,
+		touch: false
+	},
+	gameState = {
+		menu: true,
+		game: false,
+		end: false
+	};
+
 
 function preload() {
 	game.load.image('bground', 'assets/background.png'); // sprites taken from http://www.spriters-resource.com/nes/supermariobros/sheet/65962/
@@ -28,37 +59,6 @@ function preload() {
 
 }
 
-var player,
-	walls,
-	ground,
-	enemies,
-	score,
-	soundMan,
-	controls,
-	keyImg,
-	padImg,
-	startImg,
-	leftTouch,
-	rightTouch,
-	jumpTouch,
-	killTouch,
-	touchDir = {
-		left: false,
-		right: false,
-		jump: false,
-		kill: false
-	},
-	options = {
-		sounds: true,
-		gamepad: true,
-		touch: false
-	},
-	gameState = {
-		menu: true,
-		game: false,
-		end: false
-	};
-
 function create() {
 	// game setup
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -82,14 +82,9 @@ function create() {
 
 	wall.body.immovable = true;
 
-	player = new Player(game).initialise();
-
-	controls = new Controls(game);
-	controls.initialiseGamepad();
-	controls.initialiseKeyboard();
-
-	soundMan = new SoundMan(game);
-	soundMan.setup();
+	player.initialise(game);
+	controls.initialise(game);
+	soundMan.initialise(game);
 
 	menus();
 }
