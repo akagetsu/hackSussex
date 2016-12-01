@@ -71,6 +71,7 @@ Menu.prototype.initialise = function initialise(game) {
         soundMan.playSound('shoot1');
         init();
     }, this);
+
     return this.options;
 };
 
@@ -82,8 +83,9 @@ Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
         kill: false
     };
 
-    this.leftTouch = this.game.add.sprite(20, this.game.height - 60, 'btnup');
+    this.leftTouch = this.game.add.sprite(10, this.game.height - 80, 'btnup');
     this.leftTouch.inputEnabled = true;
+    this.leftTouch.alpha = 0.7;
     this.leftTouch.events.onInputDown.add(function() {
         this.leftTouch.loadTexture('btndn');
         this.touchDir.left = true;
@@ -93,8 +95,9 @@ Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
         this.touchDir.left = false;
     }, this);
 
-    this.rightTouch = this.game.add.sprite(150, this.game.height - 60, 'btnup');
+    this.rightTouch = this.game.add.sprite(140, this.game.height - 80, 'btnup');
     this.rightTouch.inputEnabled = true;
+    this.rightTouch.alpha = 0.7;
     this.rightTouch.events.onInputDown.add(function() {
         this.rightTouch.loadTexture('btndn');
         this.touchDir.right = true;
@@ -104,8 +107,9 @@ Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
         this.touchDir.right = false;
     }, this);
 
-    this.jumpTouch = this.game.add.sprite(280, this.game.height - 60, 'btnup');
+    this.jumpTouch = this.game.add.sprite(270, this.game.height - 80, 'btnup');
     this.jumpTouch.inputEnabled = true;
+    this.jumpTouch.alpha = 0.7;
     this.jumpTouch.events.onInputDown.add(function() {
         this.jumpTouch.loadTexture('btndn');
         this.touchDir.jump = true;
@@ -115,8 +119,9 @@ Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
         this.touchDir.jump = false;
     }, this);
 
-    this.killTouch = this.game.add.sprite(410, this.game.height - 60, 'btnup');
+    this.killTouch = this.game.add.sprite(400, this.game.height - 80, 'btnup');
     this.killTouch.inputEnabled = true;
+    this.killTouch.alpha = 0.7;
     this.killTouch.events.onInputDown.add(function() {
         this.killTouch.loadTexture('btndn');
         this.touchDir.kill = true;
@@ -125,6 +130,9 @@ Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
         this.killTouch.loadTexture('btnup');
         this.touchDir.kill = false;
     }, this);
+
+    this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.scale.startFullScreen(false);
 };
 
 Menu.prototype.destroyImg = function destroyImg() {
