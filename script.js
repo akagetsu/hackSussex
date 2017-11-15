@@ -47,7 +47,7 @@ function preload() {
 
 	game.load.audio('intro', 'assets/intro.mp3'); // music taken from http://ericskiff.com/music/
 	game.load.audio('main', 'assets/main.mp3'); // music taken from http://ericskiff.com/music/
-	game.load.audio('shoot', 'assets/shoot.wav'); // generated using bfxr
+	game.load.audio('shoot1', 'assets/shoot.wav'); // generated using bfxr
 	game.load.audio('shoot2', 'assets/shoot2.wav'); // generated using bfxr
 	game.load.audio('explode', 'assets/explode.wav'); // generated using bfxr
 	game.load.audio('powerup', 'assets/powerup.wav'); // generated using bfxr
@@ -89,10 +89,10 @@ function physicsHandler() {
 	player.scenePhysics(scene.walls);
 	if (gameState.game) {
 		game.physics.arcade.collide(enemies.getEnemies(), scene.walls); // enemy collision with walls
-		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
+		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), player.takeDamage, null, this);
 		game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
-		game.physics.arcade.overlap(player.getSprite(), releases.getReleases(), goodRelease, null, this);
-		game.physics.arcade.overlap(scene.ground, releases.getReleases(), failRelease, null, this);
+		game.physics.arcade.overlap(player.getSprite(), releaseHolder.getReleases(), goodRelease, null, this);
+		game.physics.arcade.overlap(scene.ground, releaseHolder.getReleases(), failRelease, null, this);
 	}
 }
 
@@ -106,11 +106,9 @@ function init() {
 
 	enemies = new Enemies(game);
 
-	releases = new Release(game);
-	releases.init();
+	releaseHolder = new ReleaseHolder(game);
 
 	score = new Score(game);
-	score.setScoreElem();
 
 	if (options.touch) {
 		menu.initialiseTouchMenu();

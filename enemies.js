@@ -4,6 +4,7 @@ function Enemies(game) {
 
 	this.enemyHolder.enableBody = true;
 	this.game.time.events.loop(Phaser.Timer.SECOND * 0.7, this.spawn, this);
+	return this;
 }
 
 Enemies.prototype.spawn = function spawn() {

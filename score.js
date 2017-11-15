@@ -1,7 +1,12 @@
 function Score(game) {
 	this.game = game;
 	this.val = 0;
-	this.scoreElem = null;
+	this.scoreElem = this.game.add.text(this.game.width / 2, 10, '0', {
+		fontSize: '32px',
+		fill: '#fff'
+	});
+	this.game.add.sprite(10, 10, 'watchers').scale.setTo(2);
+	this.game.add.sprite(this.game.width - 40, 10, 'watchers').scale.setTo(2);
 }
 
 Score.prototype.modScore = function modScore(val) {
@@ -17,12 +22,7 @@ Score.prototype.upText = function upText() {
 };
 
 Score.prototype.setScoreElem = function setScoreElem() {
-	this.scoreElem = this.game.add.text(this.game.width / 2, 10, '0', {
-		fontSize: '32px',
-		fill: '#fff'
-	});
-	this.game.add.sprite(10, 10, 'watchers').scale.setTo(2);
-	this.game.add.sprite(this.game.width - 40, 10, 'watchers').scale.setTo(2);
+
 };
 
 Score.prototype.getScore = function getScore() {
