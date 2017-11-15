@@ -1,9 +1,5 @@
 function Bullet(game) {
 	this.game = game;
-	this.bullets = null;
-}
-
-Bullet.prototype.init = function init() {
 	this.bullets = this.game.add.group();
 	this.bullets.enableBody = true;
 	this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
@@ -15,4 +11,4 @@ Bullet.prototype.init = function init() {
 	this.bullets.setAll('outOfBoundsKill', true);
 
 	return this.bullets;
-};
+}

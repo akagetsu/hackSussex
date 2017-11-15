@@ -1,18 +1,12 @@
-function Player() {
-	this.game = null;
-	this.sprite = null;
-	this.bullets = null;
+function Player(game) {
 	this.nextFire = 0;
 	this.fireFate = 100;
-}
-
-Player.prototype.initialise = function initialize(game) {
 	this.game = game;
 
 	this.sprite = this.game.add.sprite(game.world.width / 2, game.world.height - 150, 'dude');
 	this.game.physics.arcade.enable(this.sprite);
 
-	this.bullets = new Bullet(this.game).init();
+	this.bullets = new Bullet(this.game);
 
 	this.sprite.body.gravity.y = 1000;
 	this.sprite.body.collideWorldBounds = true;
@@ -21,7 +15,7 @@ Player.prototype.initialise = function initialize(game) {
 	this.sprite.animations.play('dude');
 
 	return this;
-};
+}
 
 Player.prototype.move = function move(dirSpd) {
 	this.sprite.body.velocity.x = dirSpd;

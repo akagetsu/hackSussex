@@ -1,18 +1,9 @@
-function Menu() {
-    this.game = null;
-    this.keyImg = null;
-    this.padImg = null;
-    this.touchImg = null;
-    this.startImg = null;
+function Menu(game) {
     this.leftTouch = null;
     this.rightTouch = null;
     this.killTouch = null;
     this.jumpTouch = null;
     this.touchDir = null;
-    this.options = null;
-}
-
-Menu.prototype.initialise = function initialise(game) {
     this.game = game;
     this.options = {
         keyboard: true,
@@ -72,8 +63,8 @@ Menu.prototype.initialise = function initialise(game) {
         init();
     }, this);
 
-    return this.options;
-};
+    return this;
+}
 
 Menu.prototype.initialiseTouchMenu = function initialiseTouchMenu() {
     this.touchDir = {

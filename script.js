@@ -1,12 +1,11 @@
-var app = new App(),
-	game = app.game,
-	player = new Player(),
-	scene = new Scene(),
+var game = new Game(),
+	player,
+	scene,
 	enemies,
 	score,
-	soundMan = new SoundMan(),
-	controls = new Controls(),
-	menu = new Menu(),
+	soundMan,
+	controls,
+	menu,
 	keyImg,
 	padImg,
 	startImg,
@@ -61,14 +60,14 @@ function preload() {
 
 function create() {
 	// game setup
-	app.initialise();
+	game.initialise();
 
-	scene.initialise(game);
-	player.initialise(game);
-	controls.initialise(game);
-	soundMan.initialise(game);
-
-	options = menu.initialise(game);
+	scene = new Scene(game);
+	player = new Player(game);
+	controls = new Controls(game);
+	soundMan = new SoundMan(game);
+	menu = new Menu(game);
+	options = menu.options;
 }
 
 function update() {
@@ -105,8 +104,7 @@ function init() {
 	gameState.menu = false;
 	gameState.game = true;
 
-	enemies = new Enemy(game);
-	enemies.init();
+	enemies = new Enemies(game);
 
 	releases = new Release(game);
 	releases.init();

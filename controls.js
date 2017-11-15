@@ -1,24 +1,17 @@
-function Controls() {
-    this.game = null;
-    this.pad = null;
-    this.keyboard = null;
-    this.options = null;
-}
-
-Controls.prototype.initialise = function initialise(game) {
+function Controls(game) {
     this.game = game;
     this.game.input.gamepad.start();
     this.pad = game.input.gamepad.pad1;
-
     this.keyboard = {
         cursorKeys: this.game.input.keyboard.createCursorKeys(),
         attackKey: this.game.input.keyboard.addKey(Phaser.Keyboard.X),
         jumpKey: this.game.input.keyboard.addKey(Phaser.Keyboard.Z),
         restartKey: this.game.input.keyboard.addKey(Phaser.Keyboard.P)
     };
+    this.options = null;
 
     return this;
-};
+}
 
 Controls.prototype.handleMenuControls = function handleMenuControls() {
     if (this.pad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP) || this.keyboard.cursorKeys.up.isDown && this.options.gamepad) {

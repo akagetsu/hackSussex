@@ -1,12 +1,4 @@
-function Scene() {
-    this.game = null;
-    this.walls = null;
-    this.ground = null;
-    this.wall1 = null;
-    this.wall2 = null;
-}
-
-Scene.prototype.initialise = function initialise(game) {
+function Scene(game) {
     this.game = game;
     this.walls = this.game.add.group();
     this.walls.enableBody = true;
@@ -23,4 +15,4 @@ Scene.prototype.initialise = function initialise(game) {
         .body.immovable = true;
 
     return this;
-};
+}
