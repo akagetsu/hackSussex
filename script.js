@@ -89,7 +89,7 @@ function physicsHandler() {
 	player.scenePhysics(scene.walls);
 	if (gameState.game) {
 		game.physics.arcade.collide(enemies.getEnemies(), scene.walls); // enemy collision with walls
-		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), player.takeDamage, null, this);
+		game.physics.arcade.overlap(player.getSprite(), enemies.getEnemies(), takeDamage, null, this);
 		game.physics.arcade.overlap(player.getBullets(), enemies.getEnemies(), dealDamage, null, this);
 		game.physics.arcade.overlap(player.getSprite(), releaseHolder.getReleases(), goodRelease, null, this);
 		game.physics.arcade.overlap(scene.ground, releaseHolder.getReleases(), failRelease, null, this);
